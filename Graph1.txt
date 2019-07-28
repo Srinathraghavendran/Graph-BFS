@@ -1,0 +1,166 @@
+#include<bits/stdc++.h>
+using namespace std;
+int no_of_nodes;
+struct graph
+{
+    char src;
+    char des;
+    char data;
+    graph*next=NULL;
+}edges[100];
+graph*tptr,*newnode,*start=NULL,*start1=NULL,*root1=NULL,*tptr2,*temp,*root2;
+graph*root[100]={NULL};
+int visited[100]={0};
+int flag=0;
+graph* createNode(graph *root1,char gdata)
+{
+    graph*newnode=new graph;
+    newnode->data=gdata;
+    newnode->next=NULL;
+    if(root1==NULL)
+    {
+        start=newnode;
+        return start;
+    }
+    else
+    {
+        for(tptr=start;tptr->next!=NULL;tptr=tptr->next);
+        tptr->next=newnode;
+    }
+
+}
+void display(graph*root1)
+{
+    for(tptr=root1->next;tptr->next!=NULL;cout<<tptr->data<<"->",tptr=tptr->next);
+     cout<<tptr->data;
+}
+graph * createQueue(graph*root1,int flag)
+{
+    if(flag==0)
+    {
+    for(tptr=root1->next;tptr;tptr=tptr->next)
+    {
+    graph *newnode=new graph;
+     newnode->next=NULL;
+      newnode->data=tptr->data;
+     if(start1==NULL)
+     {
+     start1=newnode;
+     }
+    else  
+    {
+        tptr2=start1;
+        while(tptr2->next!=NULL)
+            tptr2=tptr2->next;
+        tptr2->next=newnode;
+    }
+     }
+    }
+    // cout<<"Elements in Queue are : ";
+    //  for(tptr2=start1;tptr2->next!=NULL;tptr2=tptr2->next)
+    //  {
+    //      cout<<tptr2->data<<"->";
+    //  }
+    //  cout<<tptr2->data<<endl;
+     temp=start1;
+     start1=start1->next;
+     return temp;
+}
+void bfs(graph * root1)
+{
+     for(int itr1=0;itr1<no_of_nodes;itr1++)
+     {
+        if(root1->data==edges[itr1].src)
+         {
+         if(visited[itr1]!=1)
+         {
+             flag=0;
+             root1=root[itr1];
+             visited[itr1]=1;
+             break;
+         }
+         else if(start1->next!=NULL)
+         {
+          flag=1;
+         root2=createQueue(root1,flag);
+          bfs(root2);
+          return;
+         }
+     else
+     {
+        root2=createQueue(root1,flag);
+       return;
+     }
+         }
+     }
+    cout<<root1->data<<" ";
+    root2=createQueue(root1,flag);
+     bfs(root2);
+}
+
+int main()
+{
+    int edge,itr1,itr2,srcint,desint;
+    char node_name;
+    cout<<"Enter the number of nodes : ";
+    cin>>no_of_nodes;
+    int a[no_of_nodes+1][no_of_nodes+1]={0};
+    for(itr1=0;itr1<no_of_nodes;itr1++)
+    {
+        cout<<"Enter the node name : ";
+        cin>>edges[itr1].src;
+        srcint=edges[itr1].src-edges[0].src;
+        root[itr1]=createNode(root[itr1],edges[itr1].src);
+        cout<<"Enter the number of edges for "<<edges[itr1].src<<": ";
+        cin>>edge;
+        for(itr2=0;itr2<edge;itr2++)
+        {
+            cout<<"Enter the node for adjacent edges : ";
+            cin>>edges[itr1].des;
+            desint=edges[itr1].des-edges[0].src;
+            a[srcint][desint]=1;
+            //a[desint][srcint]=1; //Uncomment it if you want as an undirected graph
+            createNode(root[itr1],edges[itr1].des);
+        }
+    }
+    cout<<"Adjacency Matrix for the given graph is :"<<endl;
+     for(itr1=-1;itr1<no_of_nodes;itr1++)
+     {
+         if(itr1==-1)
+         {
+        for(itr2=0;itr2<no_of_nodes;itr2++)
+        if(itr2==0)
+        cout<<"  "<<edges[itr2].src<<" ";
+        else
+         cout<<edges[itr2].src<<" ";
+         }
+      else
+      {
+          cout<<edges[itr1].src<<" ";
+        for(itr2=0;itr2<no_of_nodes;itr2++)
+       cout<<a[itr1][itr2]<<" ";   
+      }
+     cout<<endl;
+     }
+    cout<<"Adjacency List for the given graph is :"<<endl;
+    for(itr1=0;itr1<no_of_nodes;itr1++)
+    {
+        cout<<edges[itr1].src<<" ";
+        display(root[itr1]);
+        cout<<endl;
+    }
+    cout<<"Enter the Node Element from Which graph Shoud traverse by Breadth First Search : ";
+    cin>>node_name;
+    for(itr2=0;itr2<no_of_nodes;itr2++)
+    {
+        if(node_name==edges[itr2].src)
+        {
+            cout<<"BREADTH FIRST SEARCH TRAVERSED ORDER IS : ";
+           bfs(root[itr2]);
+            break;
+        }
+    }
+    cout<<endl;
+    return 0;
+}
+
